@@ -3,7 +3,9 @@ $ErrorActionPreference = "Stop"
 
 # 設定語言為台灣繁體中文
 try {
-    Import-Module International
+    Import-Module International -ErrorAction Stop
+
+    Write-Output "國際模組已載入"
     
     Set-WinUILanguageOverride -Language zh-TW
     Set-WinUserLanguageList -LanguageList zh-TW -Force
