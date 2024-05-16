@@ -1,5 +1,10 @@
+# 確保腳本在錯誤時停止
+$ErrorActionPreference = "Stop"
+
 # 設定語言為台灣繁體中文
 try {
+    Import-Module International
+    
     Set-WinUILanguageOverride -Language zh-TW
     Set-WinUserLanguageList -LanguageList zh-TW -Force
     Set-WinSystemLocale zh-TW
