@@ -21,8 +21,10 @@ Set-WinHomeLocation -GeoId 208 -ErrorAction Stop
 # 設定系統文化為繁體中文（台灣）
 Set-Culture zh-TW -ErrorAction Stop
 
-# 強制使用 TLS 1.2
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+# 設置所有可能的 TLS 版本
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor `
+                                              [Net.SecurityProtocolType]::Tls11 -bor `
+                                              [Net.SecurityProtocolType]::Tls
 
 # 安裝 Google Chrome
 $chromeInstaller = "$env:TEMP\chrome_installer.exe"
