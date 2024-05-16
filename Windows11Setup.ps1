@@ -25,7 +25,7 @@ try {
     # 設定系統語言和區域
     Set-WinSystemLocale -SystemLocale zh-TW -ErrorAction Stop
     Set-WinUserLanguageList -LanguageList zh-TW -Force -ErrorAction Stop
-    Set-WinUILanguageOverride -Language zh-TW -ErrorAction Stop
+    # Set-WinUILanguageOverride -Language zh-TW -ErrorAction Stop
     Set-Culture zh-TW -ErrorAction Stop
     Set-WinHomeLocation -GeoId 245 -ErrorAction Stop
 
