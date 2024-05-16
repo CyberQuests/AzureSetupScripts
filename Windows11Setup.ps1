@@ -5,19 +5,31 @@ $ErrorActionPreference = "Stop"
 try {
     # 檢查並載入所需要的模組
     if (-not (Get-Module -ListAvailable -Name International)) {
-        Install-WindowsFeature -Name "RSAT-International" -IncludeAllSubFeature
+        Write-Output "International 模組不可用，嘗試安裝"
+        if (Get-WindowsFeature -Name "International-Core" -ErrorAction SilentlyContinue) {
+            Install-WindowsFeature -Name "International-Core" -IncludeAllSubFeature
+        } else {
+            Write-Error "International 模組不可用且無法安裝"
+            exit 1
+        }
     }
-    
+
     Import-Module International -ErrorAction Stop
 
-    Write-Output "國際模組已載入"
-    
-    Set-WinUILanguageOverride -Language zh-TW
-    Set-WinUserLanguageList -LanguageList zh-TW -Force
-    Set-WinSystemLocale zh-TW
-    Set-Culture zh-TW
-    Set-WinHomeLocation -GeoId 245
-    Set-WinUILanguage zh-TW
+    Write-Output "International 模組已載入"
+
+    # 安裝語言套件
+    Install-Language -Language zh-TW -CopyToSettings -ErrorAction Stop
+    Write-Output "語言套件已安裝"
+
+    # 設定系統語言和區域
+    Set-WinSystemLocale -SystemLocale zh-TW -ErrorAction Stop
+    Set-WinUserLanguageList -LanguageList zh-TW -Force -ErrorAction Stop
+    Set-WinUILanguageOverride -Language zh-TW -ErrorAction Stop
+    Set-Culture zh-TW -ErrorAction Stop
+    Set-WinHomeLocation -GeoId 245 -ErrorAction Stop
+
+    Write-Output "語言設置成功"
 } catch {
     Write-Error "設定語言失敗：$_"
 }
