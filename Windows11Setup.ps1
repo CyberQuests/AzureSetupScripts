@@ -21,53 +21,28 @@ Set-WinHomeLocation -GeoId 208 -ErrorAction Stop
 # 設定系統文化為繁體中文（台灣）
 Set-Culture zh-TW -ErrorAction Stop
 
-# 設定安裝路徑
-$originalProgressPreference = $ProgressPreference
-$ProgressPreference = "SilentlyContinue"
-
-# Helper function to download and install applications
-function Install-Application {
-    param (
-        [string]$Uri,
-        [string]$OutFile,
-        [string]$Arguments
-    )
-
-    Invoke-WebRequest -Uri $Uri -OutFile $OutFile -ErrorAction Stop
-
-    if (Test-Path $OutFile) {
-        Start-Process -FilePath $OutFile -ArgumentList $Arguments -Wait
-        if ($?) {
-            Remove-Item $OutFile -ErrorAction SilentlyContinue
-            Write-Output "應用程式安裝成功: $OutFile"
-        } else {
-            Write-Error "應用程式安裝失敗: $OutFile"
-        }
-    } else {
-        Write-Error "下載失敗：$OutFile"
-    }
-}
-
 # 安裝 Google Chrome
-Write-Output "正在安裝 Google Chrome..."
-Install-Application -Uri "https://dl.google.com/chrome/install/375.126/chrome_installer.exe" -OutFile "$env:TEMP\chrome_installer.exe" -Arguments "/silent /install"
+$chromeInstaller = "$env:TEMP\chrome_installer.exe"
+Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile $chromeInstaller
+Start-Process -FilePath $chromeInstaller -ArgumentList "/silent /install" -Wait
 
 # 安裝 Telegram
-Write-Output "正在安裝 Telegram..."
-Install-Application -Uri "https://telegram.org/dl/desktop/win64/tsetup-x64.5.0.1.exe" -OutFile "$env:TEMP\telegram_installer.exe" -Arguments "/silent /install"
+$telegramInstaller = "$env:TEMP\telegram_installer.exe"
+Invoke-WebRequest -Uri "https://telegram.org/dl/desktop/win64/tsetup-x64.5.0.1.exe" -OutFile $telegramInstaller
+Start-Process -FilePath $telegramInstaller -ArgumentList "/silent /install" -Wait
 
 # 安裝 Skype
-Write-Output "正在安裝 Skype..."
-Install-Application -Uri "https://go.skype.com/windows.desktop.download" -OutFile "$env:TEMP\skype_installer.exe" -Arguments "/silent /install"
+$skypeInstaller = "$env:TEMP\skype_installer.exe"
+Invoke-WebRequest -Uri "https://go.skype.com/windows.desktop.download" -OutFile $skypeInstaller
+Start-Process -FilePath $skypeInstaller -ArgumentList "/silent /install" -Wait
 
 # 安裝 Visual Studio Code
-Write-Output "正在安裝 Visual Studio Code..."
-Install-Application -Uri "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" -OutFile "$env:TEMP\vscode_installer.exe" -Arguments "/silent /mergetasks=!runcode"
+$vscodeInstaller = "$env:TEMP\vscode_installer.exe"
+Invoke-WebRequest -Uri "https://update.code.visualstudio.com/latest/win32-x64-user/stable" -OutFile $vscodeInstaller
+Start-Process -FilePath $vscodeInstaller -ArgumentList "/silent /mergetasks=!runcode" -Wait
 
 # 安裝 Sandboxie
-Write-Output "正在安裝 Sandboxie..."
-Install-Application -Uri "https://github.com/sandboxie-plus/Sandboxie/releases/download/v1.13.7/Sandboxie-Classic-x64-v5.68.7.exe" -OutFile "$env:TEMP\sandboxie_installer.exe" -Arguments "/S"
-
-# 恢復進度條設置
-$ProgressPreference = $originalProgressPreference
+$sandboxieInstaller = "$env:TEMP\sandboxie_installer.exe"
+Invoke-WebRequest -Uri "https://github.com/sandboxie-plus/Sandboxie/releases/download/v1.13.7/Sandboxie-Classic-x64-v5.68.7.exe" -OutFile $sandboxieInstaller
+Start-Process -FilePath $sandboxieInstaller -ArgumentList "/verysilent" -Wait
 
