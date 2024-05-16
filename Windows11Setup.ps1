@@ -30,10 +30,11 @@ function Install-Application {
     )
 
     try {
-        Invoke-WebRequest -Uri $Uri -OutFile $OutFile
+        Invoke-WebRequest -Uri $Uri -OutFile $OutFile -ErrorAction Stop
         if (Test-Path $OutFile) {
             Start-Process -FilePath $OutFile -ArgumentList $Arguments -Wait
             Remove-Item $OutFile -ErrorAction SilentlyContinue
+            Write-Output "應用程式安裝成功: $OutFile"
         } else {
             Write-Error "下載失敗：$OutFile"
         }
