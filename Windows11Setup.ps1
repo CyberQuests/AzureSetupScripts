@@ -3,6 +3,11 @@ $ErrorActionPreference = "Stop"
 
 # 設定語言為台灣繁體中文
 try {
+    # 檢查並載入所需要的模組
+    if (-not (Get-Module -ListAvailable -Name International)) {
+        Install-WindowsFeature -Name "RSAT-International" -IncludeAllSubFeature
+    }
+    
     Import-Module International -ErrorAction Stop
 
     Write-Output "國際模組已載入"
