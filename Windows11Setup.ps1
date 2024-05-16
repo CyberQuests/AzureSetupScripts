@@ -22,12 +22,16 @@ try {
     Install-Language -Language zh-TW -CopyToSettings -ErrorAction Stop
     Write-Output "語言套件已安裝"
 
+    # 設定 Windows 顯示語言為繁體中文（台灣）
+    Set-WinUILanguageOverride -Language zh-TW -ErrorAction Stop
+
     # 設定系統語言和區域
-    Set-WinSystemLocale -SystemLocale zh-TW -ErrorAction Stop
     Set-WinUserLanguageList -LanguageList zh-TW -Force -ErrorAction Stop
-    # Set-WinUILanguageOverride -Language zh-TW -ErrorAction Stop
+    Set-WinSystemLocale -SystemLocale zh-TW -ErrorAction Stop
+    Set-WinHomeLocation -GeoId 208 -ErrorAction Stop
+    
+    # 設定系統文化為繁體中文（台灣）
     Set-Culture zh-TW -ErrorAction Stop
-    Set-WinHomeLocation -GeoId 245 -ErrorAction Stop
 
     Write-Output "語言設置成功"
 } catch {
