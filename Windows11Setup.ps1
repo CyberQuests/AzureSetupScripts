@@ -27,3 +27,12 @@ Write-Output "系統語言和區域設定完成"
 Write-Output "設定系統文化為繁體中文（台灣）..."
 Set-Culture zh-TW -ErrorAction Stop
 Write-Output "系統文化設定完成"
+
+# 將設置應用到歡迎屏幕和新用戶
+Write-Output "將設置應用到歡迎屏幕和新用戶..."
+Copy-UserInternationalSettingsToSystem -WelcomeScreen $true -NewUser $true
+Write-Output "設置應用完成"
+
+# 重新啟動系統以應用更改
+Write-Output "重新啟動系統以應用更改..."
+Restart-Computer
