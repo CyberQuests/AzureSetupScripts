@@ -8,7 +8,7 @@ Write-Output "International 模組已載入"
 
 # 安裝語言套件
 Write-Output "開始安裝語言套件..."
-#Install-Language -Language zh-TW -CopyToSettings -ErrorAction Stop
+Install-Language -Language zh-TW -CopyToSettings -ErrorAction Stop
 Write-Output "語言套件已安裝"
 
 # 設定 Windows 顯示語言為繁體中文（台灣）
