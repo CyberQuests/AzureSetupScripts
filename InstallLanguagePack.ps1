@@ -6,4 +6,7 @@ Install-Language -Language "zh-TW" -CopyToSettings
 Set-WinUILanguageOverride -Language "zh-TW"
 Set-WinSystemLocale "zh-TW"
 Set-WinUserLanguageList "zh-TW" -Force
+Set-Culture zh-TW
+Copy-UserInternationalSettingsToSystem -WelcomeScreen $true -NewUser $true
+
 Restart-Computer
