@@ -2,7 +2,7 @@
 $ErrorActionPreference = "Stop"
 
 # 將腳本設置為 UTF-8 編碼
-$scriptPath = "C:\path\to\Windows11Setup.ps1"
+$scriptPath = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.10.15\Downloads\0\Windows11Setup.ps1"
 $content = Get-Content -Path $scriptPath -Raw
 Set-Content -Path $scriptPath -Value $content -Encoding UTF8
 
