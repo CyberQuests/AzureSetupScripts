@@ -8,9 +8,4 @@ Set-WinSystemLocale "zh-TW"
 Set-WinUserLanguageList "zh-TW" -Force
 Set-Culture zh-TW
 Copy-UserInternationalSettingsToSystem -WelcomeScreen $true -NewUser $true
-
-
-Invoke-WebRequest -Uri "https://telegram.org/dl/desktop/win64/" -OutFile "telegram_install.exe"
-Start-Process "telegram_install.exe" -ArgumentList "/S" -Wait
-
 Restart-Computer
