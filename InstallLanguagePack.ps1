@@ -36,5 +36,3 @@ $sandboxieInstaller = "$env:TEMP\sandboxie_installer.exe"
 Invoke-WebRequest -Uri "https://github.com/sandboxie-plus/Sandboxie/releases/download/v1.13.7/Sandboxie-Classic-x64-v5.68.7.exe" -OutFile $sandboxieInstaller
 Start-Process -FilePath $sandboxieInstaller -ArgumentList "/verysilent" -Wait
 Write-Output "Sandboxie 安裝完成"
-
-Restart-Computer
