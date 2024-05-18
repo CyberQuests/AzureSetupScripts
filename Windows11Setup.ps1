@@ -38,5 +38,4 @@ Copy-UserInternationalSettingsToSystem -WelcomeScreen $true -NewUser $true
 Write-Output "設置應用完成"
 
 # 重新啟動系統以應用更改
-Write-Output "重新啟動系統以應用更改..."
 Restart-Computer
