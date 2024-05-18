@@ -1,6 +1,10 @@
- # 確保腳本在錯誤時停止
+# 確保腳本在錯誤時停止
 $ErrorActionPreference = "Stop"
 
+# 將腳本設置為 UTF-8 編碼
+$scriptPath = "C:\path\to\Windows11Setup.ps1"
+$content = Get-Content -Path $scriptPath -Raw
+Set-Content -Path $scriptPath -Value $content -Encoding UTF8
 
 # 設定語言為台灣繁體中文
 Import-Module International -ErrorAction Stop
