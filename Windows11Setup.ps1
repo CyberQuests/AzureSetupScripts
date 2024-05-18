@@ -1,41 +1,27 @@
-# 確保腳本在錯誤時停止
-$ErrorActionPreference = "Stop"
+# 安裝 Google Chrome
+Write-Output "開始安裝 Google Chrome..."
+$chromeInstaller = "$env:TEMP\chrome_installer.exe"
+Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile $chromeInstaller
+Start-Process -FilePath $chromeInstaller -ArgumentList "/silent /install" -Wait
+Write-Output "Google Chrome 安裝完成"
 
-# 將腳本設置為 UTF-8 編碼
-$scriptPath = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.10.15\Downloads\0\Windows11Setup.ps1"
-$content = Get-Content -Path $scriptPath -Raw
-Set-Content -Path $scriptPath -Value $content -Encoding UTF8
+# 安裝 Telegram
+Write-Output "開始安裝 Telegram..."
+$telegramInstaller = "$env:TEMP\telegram_installer.exe"
+Invoke-WebRequest -Uri "https://telegram.org/dl/desktop/win64/tsetup-x64.5.0.1.exe" -OutFile $telegramInstaller
+Start-Process -FilePath $telegramInstaller -ArgumentList "/verysilent" -Wait
+Write-Output "Telegram 安裝完成"
 
-# 設定語言為台灣繁體中文
-Import-Module International -ErrorAction Stop
-Write-Output "International 模組已載入"
+# 安裝 Visual Studio Code
+Write-Output "開始安裝 Visual Studio Code..."
+$vscodeInstaller = "$env:TEMP\vscode_installer.exe"
+Invoke-WebRequest -Uri "https://update.code.visualstudio.com/latest/win32-x64-user/stable" -OutFile $vscodeInstaller
+Start-Process -FilePath $vscodeInstaller -ArgumentList "/verysilent /mergetasks=!runcode" -Wait
+Write-Output "Visual Studio Code 安裝完成"
 
-# 安裝語言套件
-Write-Output "開始安裝語言套件..."
-Install-Language -Language zh-TW -CopyToSettings -ErrorAction Stop
-Write-Output "語言套件已安裝"
-
-# 設定 Windows 顯示語言為繁體中文（台灣）
-Write-Output "設定 Windows 顯示語言為繁體中文（台灣）..."
-Set-WinUILanguageOverride -Language zh-TW -ErrorAction Stop
-Write-Output "Windows 顯示語言設定完成"
-
-# 設定系統語言和區域
-Write-Output "設定系統語言和區域..."
-Set-WinUserLanguageList -LanguageList zh-TW -Force -ErrorAction Stop
-Set-WinSystemLocale -SystemLocale zh-TW -ErrorAction Stop
-Set-WinHomeLocation -GeoId 208 -ErrorAction Stop
-Write-Output "系統語言和區域設定完成"
-
-# 設定系統文化為繁體中文（台灣）
-Write-Output "設定系統文化為繁體中文（台灣）..."
-Set-Culture zh-TW -ErrorAction Stop
-Write-Output "系統文化設定完成"
-
-# 將設置應用到歡迎屏幕和新用戶
-Write-Output "將設置應用到歡迎屏幕和新用戶..."
-Copy-UserInternationalSettingsToSystem -WelcomeScreen $true -NewUser $true
-Write-Output "設置應用完成"
-
-# 重新啟動系統以應用更改
-Restart-Computer
+# 安裝 Sandboxie
+Write-Output "開始安裝 Sandboxie..."
+$sandboxieInstaller = "$env:TEMP\sandboxie_installer.exe"
+Invoke-WebRequest -Uri "https://github.com/sandboxie-plus/Sandboxie/releases/download/v1.13.7/Sandboxie-Classic-x64-v5.68.7.exe" -OutFile $sandboxieInstaller
+Start-Process -FilePath $sandboxieInstaller -ArgumentList "/verysilent" -Wait
+Write-Output "Sandboxie 安裝完成"
