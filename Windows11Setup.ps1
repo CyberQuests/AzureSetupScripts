@@ -73,6 +73,6 @@ try {
 } catch {
     Write-Error "錯誤發生: $_"
     throw
+} finally {
+    Write-Output "所有安裝步驟完成"
 }
-
-Write-Output "所有安裝步驟完成"
