@@ -1,27 +1,67 @@
-# 安裝 Google Chrome
-Write-Output "開始安裝 Google Chrome..."
-$chromeInstaller = "$env:TEMP\chrome_installer.exe"
-Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile $chromeInstaller
-Start-Process -FilePath $chromeInstaller -ArgumentList "/silent /install" -Wait
-Write-Output "Google Chrome 安裝完成"
+# Windows11Setup.ps1
 
-# 安裝 Telegram
-Write-Output "開始安裝 Telegram..."
-$telegramInstaller = "$env:TEMP\telegram_installer.exe"
-Invoke-WebRequest -Uri "https://telegram.org/dl/desktop/win64/tsetup-x64.5.0.1.exe" -OutFile $telegramInstaller
-Start-Process -FilePath $telegramInstaller -ArgumentList "/verysilent" -Wait
-Write-Output "Telegram 安裝完成"
+# 設置錯誤操作偏好
+$ErrorActionPreference = "Stop"
 
-# 安裝 Visual Studio Code
-Write-Output "開始安裝 Visual Studio Code..."
-$vscodeInstaller = "$env:TEMP\vscode_installer.exe"
-Invoke-WebRequest -Uri "https://update.code.visualstudio.com/latest/win32-x64-user/stable" -OutFile $vscodeInstaller
-Start-Process -FilePath $vscodeInstaller -ArgumentList "/verysilent /mergetasks=!runcode" -Wait
-Write-Output "Visual Studio Code 安裝完成"
+# 函數：安裝應用程式
+function Install-Application {
+    param (
+        [string]$Name,
+        [string]$Url,
+        [string]$Installer,
+        [string]$Arguments
+    )
+    
+    try {
+        Write-Output "開始安裝 $Name..."
+        $installerPath = "$env:TEMP\$Installer"
+        Invoke-WebRequest -Uri $Url -OutFile $installerPath -UseBasicParsing
+        Start-Process -FilePath $installerPath -ArgumentList $Arguments -Wait
+        Remove-Item -Path $installerPath -Force
+        Write-Output "$Name 安裝完成"
+    }
+    catch {
+        Write-Error "安裝 $Name 時發生錯誤: $_"
+    }
+}
 
-# 安裝 Sandboxie
-Write-Output "開始安裝 Sandboxie..."
-$sandboxieInstaller = "$env:TEMP\sandboxie_installer.exe"
-Invoke-WebRequest -Uri "https://github.com/sandboxie-plus/Sandboxie/releases/download/v1.13.7/Sandboxie-Classic-x64-v5.68.7.exe" -OutFile $sandboxieInstaller
-Start-Process -FilePath $sandboxieInstaller -ArgumentList "/verysilent" -Wait
-Write-Output "Sandboxie 安裝完成"
+# 檢查磁碟空間
+$freeSpace = (Get-PSDrive C).Free / 1GB
+if ($freeSpace -lt 5) {
+    Write-Error "磁碟空間不足，至少需要 5GB 可用空間。目前可用空間: $($freeSpace)GB"
+    exit 1
+}
+
+# 安裝應用程式
+$applications = @(
+    @{
+        Name = "Google Chrome"
+        Url = "https://dl.google.com/chrome/install/latest/chrome_installer.exe"
+        Installer = "chrome_installer.exe"
+        Arguments = "/silent /install"
+    },
+    @{
+        Name = "Telegram"
+        Url = "https://telegram.org/dl/desktop/win64"
+        Installer = "telegram_installer.exe"
+        Arguments = "/VERYSILENT /NORESTART"
+    },
+    @{
+        Name = "Visual Studio Code"
+        Url = "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user"
+        Installer = "vscode_installer.exe"
+        Arguments = "/VERYSILENT /NORESTART /MERGETASKS=!runcode"
+    },
+    @{
+        Name = "Sandboxie"
+        Url = "https://github.com/sandboxie-plus/Sandboxie/releases/latest/download/Sandboxie-Classic-x64-v5.68.7.exe"
+        Installer = "sandboxie_installer.exe"
+        Arguments = "/S"
+    }
+)
+
+foreach ($app in $applications) {
+    Install-Application @app
+}
+
+Write-Output "所有應用程式安裝完成"
