@@ -1,7 +1,7 @@
 # Set-LocalGroupPolicy.ps1
 # 此腳本用於修改 AppLocker 政策，允許用戶在 Program Files 目錄下安裝和運行應用程式
 
-# 設置嚴格的錯誤處理
+# 設置嚴格的錯誤處理，遇到錯誤時停止執行
 $ErrorActionPreference = "Stop"
 
 try {
@@ -11,10 +11,6 @@ try {
         throw "此腳本需要管理員權限運行。請以管理員身份重新運行 PowerShell。"
     }
 
-    # 建立 FwPolicy2 COM 對象
-    $Rule = New-Object -ComObject FwPolicy2
-    $AppLockerPolicy = $Rule.LocalPolicy.AppLockerPolicy
-
     # 檢查 AppLocker 服務是否運行
     $appLockerService = Get-Service -Name AppIDSvc -ErrorAction SilentlyContinue
     if ($appLockerService.Status -ne 'Running') {
@@ -22,27 +18,40 @@ try {
         Start-Service -Name AppIDSvc
     }
 
-    # 建立新的 AppLocker 規則
-    $PathRule = $AppLockerPolicy.NewAppLockerRule(3, "C:\Program Files\*", 0)
-    $PathRule.Action = 1 # 允許
-    $PathRule.Description = "允許所有用戶在 Program Files 目錄下運行程序"
-    $PathRule.Name = "Allow Programs in Program Files"
+    # 檢查是否有 Set-AppLockerPolicy cmdlet
+    if (-not (Get-Command Set-AppLockerPolicy -ErrorAction SilentlyContinue)) {
+        throw "找不到 Set-AppLockerPolicy cmdlet。請確保 AppLocker 模組已安裝。"
+    }
 
-    # 添加規則到政策
-    $AppLockerPolicy.Add($PathRule)
+    # 定義 AppLocker 政策的 XML 內容
+    $appLockerPolicyXml = @"
+<AppLockerPolicy Version="1">
+  <RuleCollection Type="Exe" EnforcementMode="Enabled">
+    <FilePathRule Id="AllowProgramsInProgramFiles" Name="Allow Programs in Program Files" Description="允許所有用戶在 Program Files 目錄下運行程序" UserOrGroupSid="S-1-1-0" Action="Allow" Priority="1">
+      <Conditions>
+        <FilePathCondition Path="C:\Program Files\*" />
+      </Conditions>
+    </FilePathRule>
+    <FilePathRule Id="AllowProgramsInProgramFilesx86" Name="Allow Programs in Program Files (x86)" Description="允許所有用戶在 Program Files (x86) 目錄下運行程序" UserOrGroupSid="S-1-1-0" Action="Allow" Priority="2">
+      <Conditions>
+        <FilePathCondition Path="C:\Program Files (x86)\*" />
+      </Conditions>
+    </FilePathRule>
+  </RuleCollection>
+</AppLockerPolicy>
+"@
 
-    # 同樣添加一個規則для Program Files (x86)
-    $PathRule86 = $AppLockerPolicy.NewAppLockerRule(3, "C:\Program Files (x86)\*", 0)
-    $PathRule86.Action = 1 # 允許
-    $PathRule86.Description = "允許所有用戶在 Program Files (x86) 目錄下運行程序"
-    $PathRule86.Name = "Allow Programs in Program Files (x86)"
-    $AppLockerPolicy.Add($PathRule86)
+    # 將 AppLocker 政策寫入臨時文件
+    $tempPolicyPath = "$env:TEMP\AppLockerPolicy.xml"
+    Write-Host "正在建立 AppLocker 政策文件..."
+    $appLockerPolicyXml | Out-File -FilePath $tempPolicyPath -Encoding UTF8
 
-    # 應用新政策
-    $Rule.LocalPolicy.AppLockerPolicy = $AppLockerPolicy
+    # 應用 AppLocker 政策，使用 Merge 模式以保留現有政策並添加新規則
+    Write-Host "正在應用 AppLocker 政策..."
+    Set-AppLockerPolicy -XmlPolicy $tempPolicyPath -Merge
 
-    # 保存變更
-    $Rule.Save()
+    # 刪除臨時政策文件
+    Remove-Item -Path $tempPolicyPath -Force
 
     Write-Host "AppLocker 政策已成功更新。"
 }
@@ -51,7 +60,7 @@ catch {
     exit 1
 }
 finally {
-    # 釋放 COM 對象
+    # 釋放 COM 對象（如果有的話）
     if ($Rule) {
         [System.Runtime.Interopservices.Marshal]::ReleaseComObject($Rule) | Out-Null
     }
